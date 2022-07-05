@@ -17,6 +17,9 @@ module.exports.delete_employee = function(id, callback){
 module.exports.get_employee = function(id, callback){
     Employee.findById(id, callback).populate('schedules');
 }
+module.exports.get_employee_without_ref = function(id, callback){
+    Employee.findById(id, callback);
+}
 module.exports.update_emp_sch_by_id=function(id,sche,callback){
     Employee.findById(id, function (err, emp) {
         if (err) console.log(err);
@@ -46,12 +49,15 @@ module.exports.employee_collection =function(id, callback){
         }
      });
 }
-module.exports.emp_remove_paid_schedules=function(id,callback){
+module.exports.emp_remove_paid_schedules=function(id,sche,callback){
     Employee.findById(id,function (err, emp) {
         if (err) console.log(err);
         console.log(emp); 
-        emp._doc.schedules=[];
-        emp._doc.save();
-        //callback(err,emp);
+        sche.forEach(ele => {
+            emp._doc.schedules.pop(ele._doc._id)  
+        });
+        emp.save();
+        callback(err,emp);
       });
+
     }

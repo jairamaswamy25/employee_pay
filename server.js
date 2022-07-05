@@ -1,10 +1,10 @@
 var express = require("express");
 var body_parser = require("body-parser");
 var mongoose = require("mongoose");
-var config = "mongodb+srv://XXXXX:XXXXXXX@jaicluster.ikjvw.mongodb.net/emp_pay?retryWrites=true&w=majority";
+//var config = "mongodb+srv://jaitesting1:jaitesting1@jaicluster.ikjvw.mongodb.net/?retryWrites=true&w=majority"
+var config ="mongodb+srv://jaitesting1:jaitesting1@jaicluster.ikjvw.mongodb.net/emp_pay?retryWrites=true&w=majority"
 mongoose.connect(config, function(error){
     if(error) console.log(error);
-
         console.log("connection successful");
 });
 var app = express();

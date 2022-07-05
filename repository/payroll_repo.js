@@ -16,3 +16,6 @@ module.exports.update_payroll = function(id, new_payroll, callback){
 module.exports.delete_payroll = function(id, callback){
     Payroll.findByIdAndRemove(id, callback);
 }
+module.exports.generate_employee_old_pay_report = function(id,callback){
+    Payroll.find({"Employee":id},callback).populate(['Employee','schedules_paid']);
+}

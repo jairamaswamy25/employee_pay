@@ -21,6 +21,7 @@ router.post('/', function(req, res){
         scheduled_hours:null,
         salary:null,
         Employee:req.body._id,
+        paid:false
         //employee_id:req.body.employee_id
     }
     var id = req.body._id

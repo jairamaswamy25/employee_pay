@@ -22,24 +22,33 @@ router.get('/:id', function(req, res){
         Employee.get_employee(id, function(err, emp){
             var schedule_id = [];
             emp._doc.schedules.forEach(ele => {
-                schedule_id.push(ele._doc._id)
+                //schedule_id.push(ele._doc._id)
+                schedule_id.push(ele._id)
             });
             payroll[0]["schedules_paid"] = schedule_id
+            Schedule.update_many_schedules(schedule_id, function(err, records){
+                if (err) {
+                    return false;
+                }
+            });
             emp._doc["payroll"] = payroll[0]
-            //res.json(emp);
             Payroll.add_payroll(payroll[0])
-            Employee.emp_remove_paid_schedules(id)
-            // emp._doc.schedules.forEach(sche =>{
-            //     Employee.remove_paid_schedules(id,sche)
-            // })  
-            res.json(emp);
+            Employee.emp_remove_paid_schedules(id,emp._doc.schedules, function(err,erps){
+                if(err) throw err;
+                erps._doc["payroll"] = payroll[0]
+                res.json(erps);       
+            })
         });
     });
-   
-    // Employee.get_employee(id,)
-    // Employee.generate_employee_pay_report(id, function(err,employees){
-    //     if(err) throw err;
-    //     res.json(employees);
+});
+router.get('/old/:id', function(req, res){
+    var id = req.params.id;
+    Payroll.generate_employee_old_pay_report(id, function(err,pay){
+        if(err) throw err;
+        res.json(pay);  
+    });
+    // Schedule.generate_employee_old_pay_report(id, function(err,sch){
+        
     // });
 });
 module.exports = router;

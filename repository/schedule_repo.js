@@ -10,6 +10,9 @@ module.exports.add_schedule = function(new_schedule, callback){
 module.exports.update_schedule = function(id, new_schedule, callback){
     Schedule.findByIdAndUpdate(id, new_schedule, callback);
 }
+module.exports.update_many_schedules = function(schedule_ids, callback){
+    Schedule.updateMany({_id: {$in: schedule_ids}},{ $set: {paid: "Yes"}},{multi: true},callback);
+}
 module.exports.delete_schedule = function(id, callback){
     Schedule.findByIdAndRemove(id, callback);
 }
@@ -23,7 +26,5 @@ module.exports.generate_employee_pay_report = function(id,callback){
         { $match: { Employee: mongoose.Types.ObjectId(id)}},
     {$group: {_id: '$Employee', total_salary:{$sum:{"$toDouble": "$salary"} }}},
     {$project:{Employee:'$_id', total_salary:1,_id:0}}
-    ],callback)
-      
-    
+    ],callback)   
 }

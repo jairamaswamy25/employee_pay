@@ -6,6 +6,7 @@ var sch_schema = new Schema({
     end_time:Date,
     scheduled_hours:String,
     salary:String,
-    Employee:{ type:mongoose.Schema.Types.ObjectId, ref:"Employee"}
+    Employee:{ type:mongoose.Schema.Types.ObjectId, ref:"Employee"},
+    paid:String
 })
 var Schedule = module.exports = model('Schedule', sch_schema);
