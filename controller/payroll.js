@@ -13,32 +13,39 @@ router.get('/:id', function(req, res){
     Schedule.generate_employee_pay_report(id, function(err,sch){
         if(err) throw err;
         //res.json(sch);
-        var payroll = sch;
-        //Rule Engine Tax Calculation
-        payroll[0]["gross_pay"] = parseFloat(sch[0]["total_salary"]).toFixed(2);
-        payroll[0]["total_salary"]=payroll[0]["gross_pay"];
-        payroll[0]["tax"]  = ((parseFloat(payroll[0]["gross_pay"])*30)/100).toFixed(2);
-        payroll[0]["take_home"]  =(parseFloat(payroll[0]["gross_pay"]) - payroll[0]["tax"]).toFixed(2)
-        Employee.get_employee(id, function(err, emp){
-            var schedule_id = [];
-            emp._doc.schedules.forEach(ele => {
-                //schedule_id.push(ele._doc._id)
-                schedule_id.push(ele._id)
+        if (sch.length>0)
+        {
+            var payroll = sch;
+            //Rule Engine Tax Calculation
+            payroll[0]["gross_pay"] = parseFloat(sch[0]["total_salary"]).toFixed(2);
+            payroll[0]["total_salary"]=payroll[0]["gross_pay"];
+            payroll[0]["tax"]  = ((parseFloat(payroll[0]["gross_pay"])*30)/100).toFixed(2);
+            payroll[0]["take_home"]  =(parseFloat(payroll[0]["gross_pay"]) - payroll[0]["tax"]).toFixed(2)
+            Employee.get_employee(id, function(err, emp){
+                var schedule_id = [];
+                emp._doc.schedules.forEach(ele => {
+                    //schedule_id.push(ele._doc._id)
+                    schedule_id.push(ele._id)
+                });
+                payroll[0]["schedules_paid"] = emp._doc.schedules //schedule_id
+                Schedule.update_many_schedules(schedule_id, function(err, records){
+                    if (err) {
+                        return false;
+                    }
+                });
+                emp._doc["payroll"] = payroll[0]
+                Payroll.add_payroll(payroll[0])
+                Employee.emp_remove_paid_schedules(id,emp._doc.schedules, function(err,erps){
+                    if(err) throw err;
+                    erps._doc["payroll"] = payroll[0]
+                    res.json(erps);       
+                })
             });
-            payroll[0]["schedules_paid"] = schedule_id
-            Schedule.update_many_schedules(schedule_id, function(err, records){
-                if (err) {
-                    return false;
-                }
-            });
-            emp._doc["payroll"] = payroll[0]
-            Payroll.add_payroll(payroll[0])
-            Employee.emp_remove_paid_schedules(id,emp._doc.schedules, function(err,erps){
-                if(err) throw err;
-                erps._doc["payroll"] = payroll[0]
-                res.json(erps);       
-            })
-        });
+        }
+        else{
+            res.json([]);
+        }
+       
     });
 });
 router.get('/old/:id', function(req, res){

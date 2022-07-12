@@ -33,9 +33,10 @@ module.exports.find_max_employee_id = function(callback){
     Employee.find(callback).sort({employee_id:-1}).limit(1);
 }
 module.exports.search_employee = function(key_word,callback){
+    Employee.find({employee_first_name: key_word} || {employee_last_name: nameRegex},callback)
     //Employee.find(callback).sort({employee_id:-1}).limit(1);
-    isNaN(key_word)?Employee.find({employee_first_name: key_word} || {employee_last_name: nameRegex},callback)
-    :Employee.find({ employee_id: parseInt(key_word) },callback)
+    // isNaN(key_word)?Employee.find({employee_first_name: key_word} || {employee_last_name: nameRegex},callback)
+    // :Employee.find({ employee_id: parseInt(key_word) },callback)
     
 }
 module.exports.employee_collection =function(id, callback){

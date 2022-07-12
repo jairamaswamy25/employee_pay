@@ -1,6 +1,7 @@
 var express = require("express");
 var body_parser = require("body-parser");
 var mongoose = require("mongoose");
+const cors = require("cors");
 //var config = "mongodb+srv://jaitesting1:jaitesting1@jaicluster.ikjvw.mongodb.net/?retryWrites=true&w=majority"
 var config ="mongodb+srv://jaitesting1:jaitesting1@jaicluster.ikjvw.mongodb.net/emp_pay?retryWrites=true&w=majority"
 mongoose.connect(config, function(error){
@@ -8,6 +9,8 @@ mongoose.connect(config, function(error){
         console.log("connection successful");
 });
 var app = express();
+
+app.use(cors());
 var port = 4000;
 app.get('/', function(req,res){
     res.send("hello this is from Jai")
